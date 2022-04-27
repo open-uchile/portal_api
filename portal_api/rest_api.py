@@ -28,11 +28,11 @@ class PortalApi(APIView):
         if not request.user.is_anonymous:
             serializer = PortalSerializer(data=request.data)
             if serializer.is_valid():
-                result = self.get_courses(serializer.data)
-                if result:
-                    return Response(data={'result':'success'}, status=status.HTTP_200_OK)
+                result, courses = self.get_courses(serializer.data)
+                if result == 'success':
+                    return Response(data={'result':'success', 'courses': courses}, status=status.HTTP_200_OK)
                 else:
-                    return Response(data={'result':'error'}, status=status.HTTP_200_OK)
+                    return Response(data={'result':'error', 'error': courses}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 logger.error("PortalApi - serializer is not valid")
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -47,10 +47,10 @@ class PortalApi(APIView):
         platforms = settings.PORTAL_API_PLATFORMS or {}
         if platforms:
             if data['filter_type'] == 'all':
-                result = get_all_courses(platforms)
-                return 'success', result
+                courses = get_all_courses(platforms)
+                return 'success', courses
             else:
-                result = get_active_courses(platforms)
-                return 'success', result
+                courses = get_active_courses(platforms)
+                return 'success', courses
         else:
             return 'error', 'No hay plataformas configuradas'
