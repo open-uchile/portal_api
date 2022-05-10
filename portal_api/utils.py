@@ -19,6 +19,7 @@ from xmodule.modulestore import EdxJSONEncoder
 from xmodule.course_module import DEFAULT_START_DATE, CourseFields
 from openedx.core.djangoapps.models.course_details import CourseDetails
 from lms.djangoapps.courseware.access import has_access
+from .models import PortalApiCourse
 from datetime import datetime as dt
 from django.utils import timezone
 import requests
@@ -43,6 +44,10 @@ def get_all_courses(platforms):
             courses[platform] = 'Error en obtener curso'
         else:
             courses[platform] = clean_data_course_all(aux_courses['results'], platforms[platform])
+    external_courses = PortalApiCourse.objects.values()
+    external_courses_list = list(external_courses)
+    if len(external_courses_list) > 0:
+        courses['external'] = external_courses_list
     return courses
 
 def get_active_courses(platforms):
@@ -56,6 +61,10 @@ def get_active_courses(platforms):
             courses[platform] = 'Error en obtener curso'
         else:
             courses[platform] = clean_data_course_active(aux_courses['results'], platforms[platform])
+    external_courses = PortalApiCourse.objects.filter(end__gte=dt.now()).values()
+    external_courses_list = list(external_courses)
+    if len(external_courses_list) > 0:
+        courses['external'] = external_courses_list
     return courses
 
 def get_course(url):
@@ -79,12 +88,10 @@ def clean_data_course_all(courses, url_base):
             "course_id": course["course_id"],
             "start": course["start"],
             "end": course["end"],
-            "image": course["media"]["image"],
-            "url": "{}courses/{}/about".format(url_base,course["course_id"]),
+            "image_url": course["media"]["image"]['raw'],
+            "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
             "display_name": course["name"],
             "org": course["org"],
-            "enrollment_start": course["enrollment_start"],
-            "enrollment_end": course["enrollment_end"],
             "short_description": course["short_description"]
         })
     return data
@@ -103,12 +110,10 @@ def clean_data_course_active(courses, url_base):
                     "course_id": course["course_id"],
                     "start": course["start"],
                     "end": course["end"],
-                    "image": course["media"]["image"],
-                    "url": "{}courses/{}/about".format(url_base,course["course_id"]),
+                    "image_url": course["media"]["image"]['raw'],
+                    "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                     "display_name": course["name"],
                     "org": course["org"],
-                    "enrollment_start": course["enrollment_start"],
-                    "enrollment_end": course["enrollment_end"],
                     "short_description": course["short_description"]
                 })
     return data

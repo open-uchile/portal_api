@@ -7,6 +7,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import User
 from django.db import transaction
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from .serializers import PortalSerializer
 from .utils import get_all_courses, get_active_courses
@@ -30,15 +31,15 @@ class PortalApi(APIView):
             if serializer.is_valid():
                 result, courses = self.get_courses(serializer.data)
                 if result == 'success':
-                    return Response(data={'result':'success', 'courses': courses}, status=status.HTTP_200_OK)
+                    return JsonResponse(data={'result':'success', 'courses': courses}, status=status.HTTP_200_OK)
                 else:
-                    return Response(data={'result':'error', 'error': courses}, status=status.HTTP_400_BAD_REQUEST)
+                    return JsonResponse(data={'result':'error', 'error': courses}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 logger.error("PortalApi - serializer is not valid")
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             logger.error("PortalApi - User is Anonymous or dont have permission")
-            return Response({'error': 'User dont have permission'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'error': 'User dont have permission'}, status=status.HTTP_400_BAD_REQUEST)
 
     def get_courses(self, data):
         """
