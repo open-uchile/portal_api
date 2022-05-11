@@ -31,7 +31,7 @@ import re
 import io
 
 logger = logging.getLogger(__name__)
-URL_GET_COURSES = 'api/courses/v1/courses/'
+URL_GET_COURSES = 'api/courses/v1/courses/?page_size=100'
 
 def get_all_courses(platforms):
     """
