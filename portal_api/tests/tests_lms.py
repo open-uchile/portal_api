@@ -242,7 +242,7 @@ class TestPortalAPI(ModuleStoreTestCase):
             "filter_type":'all'
         }
         expect = {
-            'local': 'Error en obtener curso'
+            'local': []
         }
         result, courses = PortalApi().get_courses(body)
         self.assertEqual(result, 'success')
@@ -466,6 +466,219 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'short_description': '', 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
                 'start': course_1.start
+            }]
+        }
+        result, courses = PortalApi().get_courses(body)
+        self.assertEqual(result, 'success')
+        self.assertEqual(courses, expect)
+
+    @override_settings(PORTAL_API_PLATFORMS={'uabierta':{'url':'https://test.test.ts/'}})
+    @patch('requests.get')
+    def test_portal_api_all_courses_uabierta(self, get):
+        """
+            Test portal api
+        """
+        resp_data = {
+            'results': [{
+                'blocks_url': 'https://test.test.ts/api/courses/v2/blocks/?course_id=course-v1%3Aeol%2Basdasd%2B2021', 
+                'effort': None, 
+                'end': None, 
+                'enrollment_start': None, 
+                'enrollment_end': None, 
+                'id': 'course-v1:eol+asdasd+2021', 
+                'media': {
+                    'course_image': {
+                        'uri': '/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg'
+                        }, 
+                    'course_video': {'uri': None}, 
+                    'image': {
+                        'raw': 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg', 
+                        'small': 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg', 
+                        'large': 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg'
+                        }
+                    }, 
+                'name': 'das', 
+                'number': 'asdasd', 
+                'org': 'eol', 
+                'short_description': None, 
+                'start': '2030-01-01T00:00:00Z', 
+                'start_display': None, 
+                'start_type': 'empty', 
+                'pacing': 'instructor', 
+                'mobile_available': False, 
+                'hidden': False, 
+                'invitation_only': False, 
+                'course_id': 'course-v1:eol+asdasd+2021'
+            },
+            {
+                'blocks_url': 'https://test.test.ts/api/courses/v2/blocks/?course_id=course-v1%3Aeol%2Basdasd%2B2021', 
+                'effort': None, 
+                'end': '2099-01-01T00:00:00Z',
+                'enrollment_start': None, 
+                'enrollment_end': None, 
+                'id': 'course-v1:eol+test+2023', 
+                'media': {
+                    'course_image': {
+                        'uri': '/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg'
+                        }, 
+                    'course_video': {'uri': None}, 
+                    'image': {
+                        'raw': 'https://test.test.ts/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg', 
+                        'small': 'https://test.test.ts/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg', 
+                        'large': 'https://test.test.ts/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg'
+                        }
+                    }, 
+                'name': 'Certificación asda asdasd asd', 
+                'number': 'asdasd', 
+                'org': 'eol', 
+                'short_description': None, 
+                'start': '2020-01-01T00:00:00Z', 
+                'start_display': None, 
+                'start_type': 'empty', 
+                'pacing': 'instructor', 
+                'mobile_available': False, 
+                'hidden': False, 
+                'invitation_only': False, 
+                'course_id': 'course-v1:eol+test+2023'
+            }],
+            'pagination': {'next': 'https://test.test.ts/api/courses/v1/courses/?page=2', 'previous': None, 'count': 20, 'num_pages': 2}
+        }
+        get.side_effect = [namedtuple("Request",["status_code", "json"])(200, lambda:resp_data)]
+        body = {
+            "filter_type":'all'
+        }
+        expect = {
+            'uabierta': [{
+                'end': None,
+                'course_id': 'course-v1:eol+asdasd+2021', 
+                'image_url': 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg',
+                'display_name': 'das', 
+                'org': 'eol', 
+                'short_description': None, 
+                'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
+                'start': '2030-01-01T00:00:00Z'
+            }]
+        }
+        result, courses = PortalApi().get_courses(body)
+        self.assertEqual(result, 'success')
+        self.assertEqual(courses, expect)
+    
+    @override_settings(PORTAL_API_PLATFORMS={'uabierta':{'url':'https://test.test.ts/'}})
+    @patch('requests.get')
+    def test_portal_api_active_courses_uabierta(self, get):
+        """
+            Test portal api
+        """
+        resp_data = {
+            'results': [{
+                'blocks_url': 'https://test.test.ts/api/courses/v2/blocks/?course_id=course-v1%3Aeol%2Basdasd%2B2021', 
+                'effort': None, 
+                'end': '2015-01-01T00:00:00Z',
+                'enrollment_start': None, 
+                'enrollment_end': None, 
+                'id': 'course-v1:eol+asdasd+2021', 
+                'media': {
+                    'course_image': {
+                        'uri': '/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg'
+                        }, 
+                    'course_video': {'uri': None}, 
+                    'image': {
+                        'raw': 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg', 
+                        'small': 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg', 
+                        'large': 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg'
+                        }
+                    }, 
+                'name': 'das', 
+                'number': 'asdasd', 
+                'org': 'eol', 
+                'short_description': None, 
+                'start': '2010-01-01T00:00:00Z', 
+                'start_display': None, 
+                'start_type': 'empty', 
+                'pacing': 'instructor', 
+                'mobile_available': False, 
+                'hidden': False, 
+                'invitation_only': False, 
+                'course_id': 'course-v1:eol+asdasd+2021'
+            },
+            {
+                'blocks_url': 'https://test.test.ts/api/courses/v2/blocks/?course_id=course-v1%3Aeol%2Basdasd%2B2021', 
+                'effort': None, 
+                'end': '2099-01-01T00:00:00Z',
+                'enrollment_start': None, 
+                'enrollment_end': None, 
+                'id': 'course-v1:eol+test+2023', 
+                'media': {
+                    'course_image': {
+                        'uri': '/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg'
+                        }, 
+                    'course_video': {'uri': None}, 
+                    'image': {
+                        'raw': 'https://test.test.ts/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg', 
+                        'small': 'https://test.test.ts/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg', 
+                        'large': 'https://test.test.ts/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg'
+                        }
+                    }, 
+                'name': 'das', 
+                'number': 'asdasd', 
+                'org': 'eol', 
+                'short_description': None, 
+                'start': '2020-01-01T00:00:00Z', 
+                'start_display': None, 
+                'start_type': 'empty', 
+                'pacing': 'instructor', 
+                'mobile_available': False, 
+                'hidden': False, 
+                'invitation_only': False, 
+                'course_id': 'course-v1:eol+test+2023'
+            },
+            {
+                'blocks_url': 'https://test.test.ts/api/courses/v2/blocks/?course_id=course-v1%3Aeol%2Basdasd%2B2021', 
+                'effort': None, 
+                'end': '2099-01-01T00:00:00Z',
+                'enrollment_start': None, 
+                'enrollment_end': None, 
+                'id': 'course-v1:eol+test+2023', 
+                'media': {
+                    'course_image': {
+                        'uri': '/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg'
+                        }, 
+                    'course_video': {'uri': None}, 
+                    'image': {
+                        'raw': 'https://test.test.ts/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg', 
+                        'small': 'https://test.test.ts/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg', 
+                        'large': 'https://test.test.ts/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg'
+                        }
+                    }, 
+                'name': 'Certificación asdasvasd asdasd', 
+                'number': 'asdasd', 
+                'org': 'eol', 
+                'short_description': None, 
+                'start': '2020-01-01T00:00:00Z', 
+                'start_display': None, 
+                'start_type': 'empty', 
+                'pacing': 'instructor', 
+                'mobile_available': False, 
+                'hidden': False, 
+                'invitation_only': False, 
+                'course_id': 'course-v1:eol+test+2023'
+            }],
+            'pagination': {'next': 'https://test.test.ts/api/courses/v1/courses/?page=2', 'previous': None, 'count': 20, 'num_pages': 2}
+        }
+        get.side_effect = [namedtuple("Request",["status_code", "json"])(200, lambda:resp_data)]
+        body = {
+            "filter_type":'active'
+        }
+        expect = {
+            'uabierta': [{
+                'end': '2099-01-01T00:00:00Z',
+                'course_id': 'course-v1:eol+test+2023', 
+                'image_url': 'https://test.test.ts/asset-v1:eol+test+2023+type@asset+block@images_course_image.jpg',
+                'display_name': 'das', 
+                'org': 'eol', 
+                'short_description': None, 
+                'course_url': 'https://test.test.ts/courses/course-v1:eol+test+2023/about',
+                'start': '2020-01-01T00:00:00Z', 
             }]
         }
         result, courses = PortalApi().get_courses(body)

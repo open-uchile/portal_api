@@ -41,9 +41,9 @@ def get_all_courses(platforms):
     for platform in platforms:
         aux_courses = get_course(platforms[platform]['url'])
         if aux_courses is None:
-            courses[platform] = 'Error en obtener curso'
+            courses[platform] = []
         else:
-            courses[platform] = clean_data_course_all(aux_courses['results'], platforms[platform]['url'])
+            courses[platform] = clean_data_course_all(aux_courses['results'], platforms[platform]['url'], platform)
     external_courses = PortalApiCourse.objects.values()
     external_courses_list = list(external_courses)
     if len(external_courses_list) > 0:
@@ -58,9 +58,9 @@ def get_active_courses(platforms):
     for platform in platforms:
         aux_courses = get_course(platforms[platform]['url'])
         if aux_courses is None:
-            courses[platform] = 'Error en obtener curso'
+            courses[platform] = []
         else:
-            courses[platform] = clean_data_course_active(aux_courses['results'], platforms[platform]['url'])
+            courses[platform] = clean_data_course_active(aux_courses['results'], platforms[platform]['url'], platform)
     external_courses = PortalApiCourse.objects.filter(end__gte=dt.now()).values()
     external_courses_list = list(external_courses)
     if len(external_courses_list) > 0:
@@ -78,34 +78,14 @@ def get_course(url):
         return None
     return response.json()
 
-def clean_data_course_all(courses, url_base):
+def clean_data_course_all(courses, url_base, platform):
     """
         Save only important data in all courses
     """
     data = []
-    for course in courses:
-        data.append({
-            "course_id": course["course_id"],
-            "start": course["start"],
-            "end": course["end"],
-            "image_url": course["media"]["image"]['raw'],
-            "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
-            "display_name": course["name"],
-            "org": course["org"],
-            "short_description": course["short_description"]
-        })
-    return data
-
-def clean_data_course_active(courses, url_base):
-    """
-        Save only important data in active courses
-    """
-    data = []
-    now = timezone.now()
-    for course in courses:
-        if course["end"] is not None:
-            end = dt.strptime(course["end"], "%Y-%m-%dT%H:%M:%S%z")
-            if end > now:
+    if platform == 'uabierta':
+        for course in courses:
+            if 'Certificación' not in course["name"]:
                 data.append({
                     "course_id": course["course_id"],
                     "start": course["start"],
@@ -116,4 +96,77 @@ def clean_data_course_active(courses, url_base):
                     "org": course["org"],
                     "short_description": course["short_description"]
                 })
+    else:
+        for course in courses:
+            data.append({
+                "course_id": course["course_id"],
+                "start": course["start"],
+                "end": course["end"],
+                "image_url": course["media"]["image"]['raw'],
+                "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
+                "display_name": course["name"],
+                "org": course["org"],
+                "short_description": course["short_description"]
+            })
+    return data
+
+def clean_data_course_active(courses, url_base, platform):
+    """
+        Save only important data in active courses
+    """
+    data = []
+    now = timezone.now()
+    if platform == 'uabierta':
+        for course in courses:
+            if 'Certificación' not in course["name"]:
+                if course["end"] is not None:
+                    end = dt.strptime(course["end"], "%Y-%m-%dT%H:%M:%S%z")
+                    if end > now:
+                        data.append({
+                            "course_id": course["course_id"],
+                            "start": course["start"],
+                            "end": course["end"],
+                            "image_url": course["media"]["image"]['raw'],
+                            "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
+                            "display_name": course["name"],
+                            "org": course["org"],
+                            "short_description": course["short_description"]
+                        })
+                else:
+                    data.append({
+                            "course_id": course["course_id"],
+                            "start": course["start"],
+                            "end": course["end"],
+                            "image_url": course["media"]["image"]['raw'],
+                            "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
+                            "display_name": course["name"],
+                            "org": course["org"],
+                            "short_description": course["short_description"]
+                        })
+    else:
+        for course in courses:
+            if course["end"] is not None:
+                end = dt.strptime(course["end"], "%Y-%m-%dT%H:%M:%S%z")
+                if end > now:
+                    data.append({
+                        "course_id": course["course_id"],
+                        "start": course["start"],
+                        "end": course["end"],
+                        "image_url": course["media"]["image"]['raw'],
+                        "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
+                        "display_name": course["name"],
+                        "org": course["org"],
+                        "short_description": course["short_description"]
+                    })
+            else:
+                data.append({
+                        "course_id": course["course_id"],
+                        "start": course["start"],
+                        "end": course["end"],
+                        "image_url": course["media"]["image"]['raw'],
+                        "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
+                        "display_name": course["name"],
+                        "org": course["org"],
+                        "short_description": course["short_description"]
+                    })
     return data
