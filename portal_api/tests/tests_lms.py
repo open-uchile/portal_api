@@ -79,7 +79,7 @@ class TestPortalAPI(ModuleStoreTestCase):
                 password='12345',
                 email='student2@edx.org')
 
-    @override_settings(PORTAL_API_PLATFORMS={'local':'https://test.test.ts/'})
+    @override_settings(PORTAL_API_PLATFORMS={'local':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_all_courses(self, get):
         """
@@ -139,7 +139,7 @@ class TestPortalAPI(ModuleStoreTestCase):
         self.assertEqual(result, 'success')
         self.assertEqual(courses, expect)
     
-    @override_settings(PORTAL_API_PLATFORMS={'local':'https://test.test.ts/'})
+    @override_settings(PORTAL_API_PLATFORMS={'local':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_active_courses(self, get):
         """
@@ -230,7 +230,7 @@ class TestPortalAPI(ModuleStoreTestCase):
         self.assertEqual(result, 'success')
         self.assertEqual(courses, expect)
 
-    @override_settings(PORTAL_API_PLATFORMS={'local':'https://test.test.ts/'})
+    @override_settings(PORTAL_API_PLATFORMS={'local':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_error(self, get):
         """
@@ -248,7 +248,7 @@ class TestPortalAPI(ModuleStoreTestCase):
         self.assertEqual(result, 'success')
         self.assertEqual(courses, expect)
 
-    @override_settings(PORTAL_API_PLATFORMS={'local':'https://test.test.ts/'})
+    @override_settings(PORTAL_API_PLATFORMS={'local':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_all_courses_with_model(self, get):
         """
@@ -350,7 +350,7 @@ class TestPortalAPI(ModuleStoreTestCase):
         self.assertEqual(result, 'success')
         self.assertEqual(courses, expect)
     
-    @override_settings(PORTAL_API_PLATFORMS={'local':'https://test.test.ts/'})
+    @override_settings(PORTAL_API_PLATFORMS={'local':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_active_courses_with_model(self, get):
         """

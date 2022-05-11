@@ -39,11 +39,11 @@ def get_all_courses(platforms):
     """
     courses = {}
     for platform in platforms:
-        aux_courses = get_course(platforms[platform])
+        aux_courses = get_course(platforms[platform]['url'])
         if aux_courses is None:
             courses[platform] = 'Error en obtener curso'
         else:
-            courses[platform] = clean_data_course_all(aux_courses['results'], platforms[platform])
+            courses[platform] = clean_data_course_all(aux_courses['results'], platforms[platform]['url'])
     external_courses = PortalApiCourse.objects.values()
     external_courses_list = list(external_courses)
     if len(external_courses_list) > 0:
@@ -56,11 +56,11 @@ def get_active_courses(platforms):
     """
     courses = {}
     for platform in platforms:
-        aux_courses = get_course(platforms[platform])
+        aux_courses = get_course(platforms[platform]['url'])
         if aux_courses is None:
             courses[platform] = 'Error en obtener curso'
         else:
-            courses[platform] = clean_data_course_active(aux_courses['results'], platforms[platform])
+            courses[platform] = clean_data_course_active(aux_courses['results'], platforms[platform]['url'])
     external_courses = PortalApiCourse.objects.filter(end__gte=dt.now()).values()
     external_courses_list = list(external_courses)
     if len(external_courses_list) > 0:
