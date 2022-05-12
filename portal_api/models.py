@@ -14,3 +14,4 @@ class PortalApiCourse(models.Model):
     display_name = models.CharField(max_length=255, default='', blank=True)
     org = models.CharField(max_length=50, default='', blank=True)
     short_description = models.TextField('Short Description', blank=True, null=True)
+    is_visible = models.BooleanField(default=True)

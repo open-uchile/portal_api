@@ -332,7 +332,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': '', 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': course_1.start
+                'start': course_1.start,
+                'is_visible': True
             },
             {
                 'id': 2,
@@ -343,7 +344,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': '', 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': course_2.start
+                'start': course_2.start,
+                'is_visible': True
             }]
         }
         result, courses = PortalApi().get_courses(body)
@@ -374,7 +376,8 @@ class TestPortalAPI(ModuleStoreTestCase):
             course_url = 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
             display_name = 'Course test 2',
             org = 'eol',
-            short_description = ''
+            short_description = '',
+            is_visible=False
         )
         resp_data = {
             'results': [{
@@ -465,7 +468,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': '', 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': course_1.start
+                'start': course_1.start,
+                'is_visible': True
             }]
         }
         result, courses = PortalApi().get_courses(body)
