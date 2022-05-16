@@ -18,9 +18,10 @@ from common.djangoapps.student.tests.factories import CourseEnrollmentAllowedFac
 from common.djangoapps.student.auth import has_course_author_access
 from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRole
 from django.test.utils import override_settings
+from collections import OrderedDict
 from portal_api.serializers import PortalSerializer
 from portal_api.rest_api import PortalApi
-from portal_api.models import PortalApiCourse
+from portal_api.models import PortalApiCourse, PortalApiOrg
 from datetime import datetime as dt
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
@@ -79,12 +80,17 @@ class TestPortalAPI(ModuleStoreTestCase):
                 password='12345',
                 email='student2@edx.org')
 
-    @override_settings(PORTAL_API_PLATFORMS={'local':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_all_courses(self, get):
         """
             Test portal api
         """
+        PortalApiOrg.objects.create(
+            org = 'local',
+            display_name = "Local",
+            sort_number = 1,
+            url='https://test.test.ts/'
+        )
         resp_data = {
             'results': [{
                 'blocks_url': 'https://test.test.ts/api/courses/v2/blocks/?course_id=course-v1%3Aeol%2Basdasd%2B2021', 
@@ -123,7 +129,7 @@ class TestPortalAPI(ModuleStoreTestCase):
         body = {
             "filter_type":'all'
         }
-        expect = {
+        expect = OrderedDict({
             'local': [{
                 'end': None,
                 'course_id': 'course-v1:eol+asdasd+2021', 
@@ -134,17 +140,22 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
                 'start': '2030-01-01T00:00:00Z'
             }]
-        }
+        })
         result, courses = PortalApi().get_courses(body)
         self.assertEqual(result, 'success')
         self.assertEqual(courses, expect)
     
-    @override_settings(PORTAL_API_PLATFORMS={'local':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_active_courses(self, get):
         """
             Test portal api
         """
+        PortalApiOrg.objects.create(
+            org = 'local',
+            display_name = "Local",
+            sort_number = 1,
+            url='https://test.test.ts/'
+        )
         resp_data = {
             'results': [{
                 'blocks_url': 'https://test.test.ts/api/courses/v2/blocks/?course_id=course-v1%3Aeol%2Basdasd%2B2021', 
@@ -214,7 +225,7 @@ class TestPortalAPI(ModuleStoreTestCase):
         body = {
             "filter_type":'active'
         }
-        expect = {
+        expect = OrderedDict({
             'local': [{
                 'end': '2099-01-01T00:00:00Z',
                 'course_id': 'course-v1:eol+test+2023', 
@@ -225,35 +236,51 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+test+2023/about',
                 'start': '2020-01-01T00:00:00Z', 
             }]
-        }
+        })
         result, courses = PortalApi().get_courses(body)
         self.assertEqual(result, 'success')
         self.assertEqual(courses, expect)
 
-    @override_settings(PORTAL_API_PLATFORMS={'local':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_error(self, get):
         """
             Test portal api
         """
+        PortalApiOrg.objects.create(
+            org = 'local',
+            display_name = "Local",
+            sort_number = 1,
+            url='https://test.test.ts/'
+        )
         resp_data = 'Error'
         get.side_effect = [namedtuple("Request",["status_code", "text"])(403, resp_data)]
         body = {
             "filter_type":'all'
         }
-        expect = {
+        expect = OrderedDict({
             'local': []
-        }
+        })
         result, courses = PortalApi().get_courses(body)
         self.assertEqual(result, 'success')
         self.assertEqual(courses, expect)
 
-    @override_settings(PORTAL_API_PLATFORMS={'local':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_all_courses_with_model(self, get):
         """
             Test portal api with exteral courses
         """
+        PortalApiOrg.objects.create(
+            org = 'local',
+            display_name = "Local",
+            sort_number = 1,
+            url='https://test.test.ts/'
+        )
+        externo = PortalApiOrg.objects.create(
+            org = 'externo',
+            display_name = "Externo",
+            sort_number = 2,
+            url=''
+        )
         course_1 = PortalApiCourse.objects.create(
             course_id = 'course-v1:eol+test1+2022',
             start = dt.strptime('2000-01-01T00:00:00Z', "%Y-%m-%dT%H:%M:%S%z"),
@@ -261,7 +288,7 @@ class TestPortalAPI(ModuleStoreTestCase):
             image_url = 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg',
             course_url = 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
             display_name = 'Course test 1',
-            org = 'eol',
+            org = externo,
             short_description = ''
         )
         course_2 = PortalApiCourse.objects.create(
@@ -271,7 +298,7 @@ class TestPortalAPI(ModuleStoreTestCase):
             image_url = 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg',
             course_url = 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
             display_name = 'Course test 2',
-            org = 'eol',
+            org = externo,
             short_description = ''
         )
         resp_data = {
@@ -312,7 +339,7 @@ class TestPortalAPI(ModuleStoreTestCase):
         body = {
             "filter_type":'all'
         }
-        expect = {
+        expect = OrderedDict({
             'local': [{
                 'end': None,
                 'course_id': 'course-v1:eol+asdasd+2021', 
@@ -323,41 +350,50 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
                 'start': '2030-01-01T00:00:00Z'
             }],
-            'external': [{
-                'id': 1,
+            'externo': [{
                 'end': course_1.end,
                 'course_id': 'course-v1:eol+test1+2022', 
                 'image_url': 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg',
                 'display_name': 'Course test 1', 
-                'org': 'eol', 
+                'org': 'Externo', 
                 'short_description': '', 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': course_1.start,
-                'is_visible': True
+                'start': course_1.start
             },
             {
-                'id': 2,
                 'end': course_2.end,
                 'course_id': 'course-v1:eol+test2+2022', 
                 'image_url': 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg',
                 'display_name': 'Course test 2', 
-                'org': 'eol', 
+                'org': 'Externo', 
                 'short_description': '', 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': course_2.start,
-                'is_visible': True
+                'start': course_2.start
             }]
-        }
+        })
         result, courses = PortalApi().get_courses(body)
         self.assertEqual(result, 'success')
+        print(courses)
+        print(expect)
         self.assertEqual(courses, expect)
     
-    @override_settings(PORTAL_API_PLATFORMS={'local':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_active_courses_with_model(self, get):
         """
             Test portal api with exteral courses
         """
+        PortalApiOrg.objects.create(
+            org = 'local',
+            display_name = "Local",
+            sort_number = 1,
+            url='https://test.test.ts/'
+        )
+        externo = PortalApiOrg.objects.create(
+            org = 'externo',
+            display_name = "Externo",
+            sort_number = 2,
+            url=''
+        )
         course_1 = PortalApiCourse.objects.create(
             course_id = 'course-v1:eol+test1+2022',
             start = dt.strptime('2000-01-01T00:00:00Z', "%Y-%m-%dT%H:%M:%S%z"),
@@ -365,7 +401,7 @@ class TestPortalAPI(ModuleStoreTestCase):
             image_url = 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg',
             course_url = 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
             display_name = 'Course test 1',
-            org = 'eol',
+            org = externo,
             short_description = ''
         )
         PortalApiCourse.objects.create(
@@ -375,7 +411,7 @@ class TestPortalAPI(ModuleStoreTestCase):
             image_url = 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg',
             course_url = 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
             display_name = 'Course test 2',
-            org = 'eol',
+            org = externo,
             short_description = '',
             is_visible=False
         )
@@ -448,7 +484,7 @@ class TestPortalAPI(ModuleStoreTestCase):
         body = {
             "filter_type":'active'
         }
-        expect = {
+        expect = OrderedDict({
             'local': [{
                 'end': '2099-01-01T00:00:00Z',
                 'course_id': 'course-v1:eol+test+2023', 
@@ -459,29 +495,32 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+test+2023/about',
                 'start': '2020-01-01T00:00:00Z', 
             }],
-            'external': [{
-                'id': 1,
+            'externo': [{
                 'end': course_1.end,
                 'course_id': 'course-v1:eol+test1+2022', 
                 'image_url': 'https://test.test.ts/asset-v1:eol+asdasd+2021+type@asset+block@images_course_image.jpg',
                 'display_name': 'Course test 1', 
-                'org': 'eol', 
+                'org': 'Externo', 
                 'short_description': '', 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': course_1.start,
-                'is_visible': True
+                'start': course_1.start
             }]
-        }
+        })
         result, courses = PortalApi().get_courses(body)
         self.assertEqual(result, 'success')
         self.assertEqual(courses, expect)
 
-    @override_settings(PORTAL_API_PLATFORMS={'uabierta':{'url':'https://test.test.ts/'}})
     @patch('requests.get')
     def test_portal_api_all_courses_uabierta(self, get):
         """
             Test portal api
         """
+        PortalApiOrg.objects.create(
+            org = 'uabierta',
+            display_name = "UAbieta",
+            sort_number = 1,
+            url='https://test.test.ts/'
+        )
         resp_data = {
             'results': [{
                 'blocks_url': 'https://test.test.ts/api/courses/v2/blocks/?course_id=course-v1%3Aeol%2Basdasd%2B2021', 
@@ -551,7 +590,7 @@ class TestPortalAPI(ModuleStoreTestCase):
         body = {
             "filter_type":'all'
         }
-        expect = {
+        expect = OrderedDict({
             'uabierta': [{
                 'end': None,
                 'course_id': 'course-v1:eol+asdasd+2021', 
@@ -562,7 +601,7 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
                 'start': '2030-01-01T00:00:00Z'
             }]
-        }
+        })
         result, courses = PortalApi().get_courses(body)
         self.assertEqual(result, 'success')
         self.assertEqual(courses, expect)
@@ -573,6 +612,12 @@ class TestPortalAPI(ModuleStoreTestCase):
         """
             Test portal api
         """
+        PortalApiOrg.objects.create(
+            org = 'uabierta',
+            display_name = "UAbieta",
+            sort_number = 1,
+            url='https://test.test.ts/'
+        )
         resp_data = {
             'results': [{
                 'blocks_url': 'https://test.test.ts/api/courses/v2/blocks/?course_id=course-v1%3Aeol%2Basdasd%2B2021', 
@@ -673,7 +718,7 @@ class TestPortalAPI(ModuleStoreTestCase):
         body = {
             "filter_type":'active'
         }
-        expect = {
+        expect = OrderedDict({
             'uabierta': [{
                 'end': '2099-01-01T00:00:00Z',
                 'course_id': 'course-v1:eol+test+2023', 
@@ -684,7 +729,7 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+test+2023/about',
                 'start': '2020-01-01T00:00:00Z', 
             }]
-        }
+        })
         result, courses = PortalApi().get_courses(body)
         self.assertEqual(result, 'success')
         self.assertEqual(courses, expect)

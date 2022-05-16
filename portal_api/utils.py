@@ -12,6 +12,7 @@ from opaque_keys.edx.keys import CourseKey
 from opaque_keys import InvalidKeyError
 from lms.djangoapps.courseware.courses import get_course_by_id, get_course_with_access
 from xmodule.modulestore.django import modulestore
+from collections import OrderedDict
 from common.djangoapps.student import auth
 from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRole
 from common.djangoapps.course_action_state.models import CourseRerunState
@@ -19,7 +20,7 @@ from xmodule.modulestore import EdxJSONEncoder
 from xmodule.course_module import DEFAULT_START_DATE, CourseFields
 from openedx.core.djangoapps.models.course_details import CourseDetails
 from lms.djangoapps.courseware.access import has_access
-from .models import PortalApiCourse
+from .models import PortalApiCourse, PortalApiOrg
 from datetime import datetime as dt
 from django.utils import timezone
 import requests
@@ -33,38 +34,32 @@ import io
 logger = logging.getLogger(__name__)
 URL_GET_COURSES = 'api/courses/v1/courses/?page_size=100'
 
-def get_all_courses(platforms):
+def get_all_courses():
     """
         Get all courses on configured platforms
     """
-    courses = {}
+    platforms = list(PortalApiOrg.objects.order_by("sort_number").values())
+    courses = OrderedDict()
     for platform in platforms:
-        aux_courses = get_course(platforms[platform]['url'])
-        if aux_courses is None:
-            courses[platform] = []
-        else:
-            courses[platform] = clean_data_course_all(aux_courses['results'], platforms[platform]['url'], platform)
-    external_courses = PortalApiCourse.objects.filter(is_visible=True).values()
-    external_courses_list = list(external_courses)
-    if len(external_courses_list) > 0:
-        courses['external'] = external_courses_list
+        courses[platform['org']] = course_model_to_list(PortalApiCourse.objects.filter(is_visible=True, org__id=platform['id']))
+        if platform['url']:
+            aux_courses = get_course(platform['url'])
+            if aux_courses is not None:
+                courses[platform['org']] += clean_data_course_all(aux_courses['results'], platform['url'], platform['org'])
     return courses
 
-def get_active_courses(platforms):
+def get_active_courses():
     """
         Get active courses on configured platforms
     """
-    courses = {}
+    platforms = list(PortalApiOrg.objects.order_by("sort_number").values())
+    courses = OrderedDict()
     for platform in platforms:
-        aux_courses = get_course(platforms[platform]['url'])
-        if aux_courses is None:
-            courses[platform] = []
-        else:
-            courses[platform] = clean_data_course_active(aux_courses['results'], platforms[platform]['url'], platform)
-    external_courses = PortalApiCourse.objects.filter(is_visible=True).values()
-    external_courses_list = list(external_courses)
-    if len(external_courses_list) > 0:
-        courses['external'] = external_courses_list
+        courses[platform['org']] = course_model_to_list(PortalApiCourse.objects.filter(is_visible=True, org__id=platform['id']))
+        if platform['url']:
+            aux_courses = get_course(platform['url'])
+            if aux_courses is not None:
+                courses[platform['org']] += clean_data_course_active(aux_courses['results'], platform['url'], platform['org'])
     return courses
 
 def get_course(url):
@@ -77,6 +72,20 @@ def get_course(url):
         logger.error('Error get courses, status_code: {}, response: {}'.format(response.status_code, response.text))
         return None
     return response.json()
+
+def course_model_to_list(courses):
+    return [
+        {
+            "course_id": x.course_id,
+            "start": x.start,
+            "end": x.end,
+            "image_url": x.image_url,
+            "course_url": x.course_url,
+            "display_name": x.display_name,
+            "org": x.org.display_name,
+            "short_description": x.short_description
+        } for x in courses
+    ]
 
 def clean_data_course_all(courses, url_base, platform):
     """
@@ -170,3 +179,10 @@ def clean_data_course_active(courses, url_base, platform):
                         "short_description": course["short_description"]
                     })
     return data
+
+def get_platform_names():
+    platforms = {}
+    aux = PortalApiOrg.objects.values('org', 'display_name')
+    for x in aux:
+        platforms[x['org']] = x['display_name']
+    return platforms

@@ -45,13 +45,9 @@ class PortalApi(APIView):
         """
             Get courses by filter type
         """
-        platforms = settings.PORTAL_API_PLATFORMS or {}
-        if platforms:
-            if data['filter_type'] == 'all':
-                courses = get_all_courses(platforms)
-                return 'success', courses
-            else:
-                courses = get_active_courses(platforms)
-                return 'success', courses
+        if data['filter_type'] == 'all':
+            courses = get_all_courses()
+            return 'success', courses
         else:
-            return 'error', 'No hay plataformas configuradas'
+            courses = get_active_courses()
+            return 'success', courses
