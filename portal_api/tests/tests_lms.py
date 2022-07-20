@@ -138,7 +138,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': None, 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': '2030-01-01T00:00:00Z'
+                'start': '2030-01-01T00:00:00Z',
+                'self_paced': False
             }]
         })
         result, courses = PortalApi().get_courses(body)
@@ -234,7 +235,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': None, 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+test+2023/about',
-                'start': '2020-01-01T00:00:00Z', 
+                'start': '2020-01-01T00:00:00Z',
+                'self_paced': False
             }]
         })
         result, courses = PortalApi().get_courses(body)
@@ -348,7 +350,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': None, 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': '2030-01-01T00:00:00Z'
+                'start': '2030-01-01T00:00:00Z',
+                'self_paced': False
             }],
             'externo': [{
                 'end': course_1.end,
@@ -358,7 +361,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'Externo', 
                 'short_description': '', 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': course_1.start
+                'start': course_1.start,
+                'self_paced': False
             },
             {
                 'end': course_2.end,
@@ -368,7 +372,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'Externo', 
                 'short_description': '', 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': course_2.start
+                'start': course_2.start,
+                'self_paced': False
             }]
         })
         result, courses = PortalApi().get_courses(body)
@@ -493,7 +498,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': None, 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+test+2023/about',
-                'start': '2020-01-01T00:00:00Z', 
+                'start': '2020-01-01T00:00:00Z',
+                'self_paced': False
             }],
             'externo': [{
                 'end': course_1.end,
@@ -503,7 +509,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'Externo', 
                 'short_description': '', 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': course_1.start
+                'start': course_1.start,
+                'self_paced': False
             }]
         })
         result, courses = PortalApi().get_courses(body)
@@ -599,7 +606,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': None, 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
-                'start': '2030-01-01T00:00:00Z'
+                'start': '2030-01-01T00:00:00Z',
+                'self_paced': False
             }]
         })
         result, courses = PortalApi().get_courses(body)
@@ -727,7 +735,8 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': None, 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+test+2023/about',
-                'start': '2020-01-01T00:00:00Z', 
+                'start': '2020-01-01T00:00:00Z',
+                'self_paced': False
             }]
         })
         result, courses = PortalApi().get_courses(body)

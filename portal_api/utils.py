@@ -83,7 +83,8 @@ def course_model_to_list(courses):
             "course_url": x.course_url,
             "display_name": x.display_name,
             "org": x.org.display_name,
-            "short_description": x.short_description
+            "short_description": x.short_description,
+            "self_paced": x.self_paced
         } for x in courses
     ]
 
@@ -103,7 +104,8 @@ def clean_data_course_all(courses, url_base, platform):
                     "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                     "display_name": course["name"],
                     "org": course["org"],
-                    "short_description": course["short_description"]
+                    "short_description": course["short_description"],
+                    "self_paced": course["pacing"] == "self"
                 })
     else:
         for course in courses:
@@ -115,7 +117,8 @@ def clean_data_course_all(courses, url_base, platform):
                 "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                 "display_name": course["name"],
                 "org": course["org"],
-                "short_description": course["short_description"]
+                "short_description": course["short_description"],
+                "self_paced": course["pacing"] == "self"
             })
     return data
 
@@ -139,7 +142,8 @@ def clean_data_course_active(courses, url_base, platform):
                             "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                             "display_name": course["name"],
                             "org": course["org"],
-                            "short_description": course["short_description"]
+                            "short_description": course["short_description"],
+                            "self_paced": course["pacing"] == "self"
                         })
                 else:
                     data.append({
@@ -150,7 +154,8 @@ def clean_data_course_active(courses, url_base, platform):
                             "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                             "display_name": course["name"],
                             "org": course["org"],
-                            "short_description": course["short_description"]
+                            "short_description": course["short_description"],
+                            "self_paced": course["pacing"] == "self"
                         })
     else:
         for course in courses:
@@ -165,7 +170,8 @@ def clean_data_course_active(courses, url_base, platform):
                         "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                         "display_name": course["name"],
                         "org": course["org"],
-                        "short_description": course["short_description"]
+                        "short_description": course["short_description"],
+                        "self_paced": course["pacing"] == "self"
                     })
             else:
                 data.append({
@@ -176,7 +182,8 @@ def clean_data_course_active(courses, url_base, platform):
                         "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                         "display_name": course["name"],
                         "org": course["org"],
-                        "short_description": course["short_description"]
+                        "short_description": course["short_description"],
+                        "self_paced": course["pacing"] == "self"
                     })
     return data
 

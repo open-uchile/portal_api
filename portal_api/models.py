@@ -23,6 +23,7 @@ class PortalApiCourse(models.Model):
     display_name = models.CharField(max_length=255, default='', blank=True)
     org = models.ForeignKey(PortalApiOrg, related_name="organization", on_delete=models.CASCADE, default=None)
     short_description = models.TextField('Short Description', blank=True, null=True)
+    self_paced = models.BooleanField(default=False, help_text = "Enabled if is self-paced, Disabled if is instructor-paced")
     is_visible = models.BooleanField(default=True)
     
     def __str__(self):
