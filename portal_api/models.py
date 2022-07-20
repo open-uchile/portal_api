@@ -18,6 +18,8 @@ class PortalApiCourse(models.Model):
     course_id = models.CharField(max_length=100, default='', blank=True)
     start = models.DateTimeField(null=True, default=None, blank=True)
     end = models.DateTimeField(null=True, default=None, blank=True)
+    enrollment_start = models.DateTimeField(null=True, default=None, blank=True)
+    enrollment_end = models.DateTimeField(null=True, default=None, blank=True)
     image_url = models.CharField(max_length=255, default='', blank=True)
     course_url = models.CharField(max_length=255, default='', blank=True)
     display_name = models.CharField(max_length=255, default='', blank=True)

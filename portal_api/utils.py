@@ -84,7 +84,9 @@ def course_model_to_list(courses):
             "display_name": x.display_name,
             "org": x.org.display_name,
             "short_description": x.short_description,
-            "self_paced": x.self_paced
+            "self_paced": x.self_paced,
+            "enrollment_start": x.enrollment_start,
+            "enrollment_end": x.enrollment_end
         } for x in courses
     ]
 
@@ -100,6 +102,8 @@ def clean_data_course_all(courses, url_base, platform):
                     "course_id": course["course_id"],
                     "start": course["start"],
                     "end": course["end"],
+                    "enrollment_start": course["enrollment_start"],
+                    "enrollment_end": course["enrollment_end"],
                     "image_url": course["media"]["image"]['raw'],
                     "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                     "display_name": course["name"],
@@ -113,6 +117,8 @@ def clean_data_course_all(courses, url_base, platform):
                 "course_id": course["course_id"],
                 "start": course["start"],
                 "end": course["end"],
+                "enrollment_start": course["enrollment_start"],
+                "enrollment_end": course["enrollment_end"],
                 "image_url": course["media"]["image"]['raw'],
                 "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                 "display_name": course["name"],
@@ -142,6 +148,8 @@ def clean_data_course_active(courses, url_base, platform):
                             "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                             "display_name": course["name"],
                             "org": course["org"],
+                            "enrollment_start": course["enrollment_start"],
+                            "enrollment_end": course["enrollment_end"],
                             "short_description": course["short_description"],
                             "self_paced": course["pacing"] == "self"
                         })
@@ -150,6 +158,8 @@ def clean_data_course_active(courses, url_base, platform):
                             "course_id": course["course_id"],
                             "start": course["start"],
                             "end": course["end"],
+                            "enrollment_start": course["enrollment_start"],
+                            "enrollment_end": course["enrollment_end"],
                             "image_url": course["media"]["image"]['raw'],
                             "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                             "display_name": course["name"],
@@ -166,6 +176,8 @@ def clean_data_course_active(courses, url_base, platform):
                         "course_id": course["course_id"],
                         "start": course["start"],
                         "end": course["end"],
+                        "enrollment_start": course["enrollment_start"],
+                        "enrollment_end": course["enrollment_end"],
                         "image_url": course["media"]["image"]['raw'],
                         "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                         "display_name": course["name"],
@@ -178,6 +190,8 @@ def clean_data_course_active(courses, url_base, platform):
                         "course_id": course["course_id"],
                         "start": course["start"],
                         "end": course["end"],
+                        "enrollment_start": course["enrollment_start"],
+                        "enrollment_end": course["enrollment_end"],
                         "image_url": course["media"]["image"]['raw'],
                         "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
                         "display_name": course["name"],
