@@ -567,7 +567,7 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': None, 
                 'start': '2030-01-01T00:00:00Z', 
-                'start_display': None, 
+                'start_display': '', 
                 'start_type': 'empty', 
                 'pacing': 'instructor', 
                 'mobile_available': False, 
@@ -624,6 +624,7 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'enrollment_start': None, 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+asdasd+2021/about',
                 'start': '2030-01-01T00:00:00Z',
+                'start_display': None, 
                 'self_paced': False
             }]
         })
@@ -698,7 +699,7 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'org': 'eol', 
                 'short_description': None, 
                 'start': '2020-01-01T00:00:00Z', 
-                'start_display': None, 
+                'start_display': 'test', 
                 'start_type': 'empty', 
                 'pacing': 'instructor', 
                 'mobile_available': False, 
@@ -755,6 +756,7 @@ class TestPortalAPI(ModuleStoreTestCase):
                 'short_description': None, 
                 'course_url': 'https://test.test.ts/courses/course-v1:eol+test+2023/about',
                 'start': '2020-01-01T00:00:00Z',
+                'start_display': 'test',
                 'self_paced': False
             }]
         })

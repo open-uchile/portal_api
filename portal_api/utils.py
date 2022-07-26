@@ -121,6 +121,7 @@ def clean_data_course_all(courses, url_base, platform):
                 data.append({
                     "course_id": course["course_id"],
                     "start": course["start"],
+                    "start_display": course["start_display"] or None,
                     "end": course["end"],
                     "enrollment_start": course["enrollment_start"],
                     "enrollment_end": course["enrollment_end"],
@@ -163,6 +164,7 @@ def clean_data_course_active(courses, url_base, platform):
                         data.append({
                             "course_id": course["course_id"],
                             "start": course["start"],
+                            "start_display": course["start_display"] or None,
                             "end": course["end"],
                             "image_url": course["media"]["image"]['raw'],
                             "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
@@ -177,6 +179,7 @@ def clean_data_course_active(courses, url_base, platform):
                     data.append({
                             "course_id": course["course_id"],
                             "start": course["start"],
+                            "start_display": course["start_display"] or None,
                             "end": course["end"],
                             "enrollment_start": course["enrollment_start"],
                             "enrollment_end": course["enrollment_end"],
@@ -243,6 +246,7 @@ def clean_data_course_active_enroll(courses, url_base, platform):
                             data.append({
                                 "course_id": course["course_id"],
                                 "start": course["start"],
+                                "start_display": course["start_display"] or None,
                                 "end": course["end"],
                                 "image_url": course["media"]["image"]['raw'],
                                 "course_url": "{}courses/{}/about".format(url_base,course["course_id"]),
@@ -258,6 +262,7 @@ def clean_data_course_active_enroll(courses, url_base, platform):
                         data.append({
                                 "course_id": course["course_id"],
                                 "start": course["start"],
+                                "start_display": course["start_display"] or None,
                                 "end": course["end"],
                                 "enrollment_start": course["enrollment_start"],
                                 "enrollment_end": course["enrollment_end"],
