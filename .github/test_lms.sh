@@ -1,13 +1,18 @@
-#!/bin/dash
-pip install -e /openedx/requirements/portal_api
+#!/bin/bash
 
-cd /openedx/requirements/portal_api
+set -e
+
+pip install --src /openedx/venv/src -e /openedx/requirements/app
+
+cd /openedx/requirements/app
 cp /openedx/edx-platform/setup.cfg .
+
 mkdir test_root
 cd test_root/
 ln -s /openedx/staticfiles .
 
-cd /openedx/requirements/portal_api
+cd /openedx/requirements/app
 
-#openedx-assets collect --settings=prod.assets
-DJANGO_SETTINGS_MODULE=lms.envs.test EDXAPP_TEST_MONGO_HOST=mongodb pytest portal_api/tests/tests_lms.py
+DJANGO_SETTINGS_MODULE=lms.envs.test EDXAPP_TEST_MONGO_HOST=mongodb pytest portal_api/tests/tests_lms.py \
+  && \
+  rm -rf test_root
