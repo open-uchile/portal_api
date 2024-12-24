@@ -1,22 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from mock import patch, Mock, MagicMock
+from mock import patch
 from collections import namedtuple
-from django.urls import reverse
-from django.test import TestCase, Client
-from django.conf import settings
-from django.contrib.auth.models import Permission, User
-from django.contrib.contenttypes.models import ContentType
-from urllib.parse import parse_qs
-from opaque_keys.edx.locator import CourseLocator
-from opaque_keys.edx.keys import CourseKey
-from xmodule.modulestore.tests.factories import CourseFactory, ItemFactory
-from xmodule.modulestore import ModuleStoreEnum
+from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
-from common.djangoapps.student.tests.factories import CourseEnrollmentAllowedFactory, UserFactory, CourseEnrollmentFactory
-from common.djangoapps.student.auth import has_course_author_access
-from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRole
+from common.djangoapps.student.tests.factories import  UserFactory
 from django.test.utils import override_settings
 from collections import OrderedDict
 from portal_api.serializers import PortalSerializer
@@ -24,13 +13,6 @@ from portal_api.rest_api import PortalApi
 from portal_api.models import PortalApiCourse, PortalApiOrg
 from portal_api.utils import get_active_enroll_courses
 from datetime import datetime as dt
-from django.utils import timezone
-from django.core.serializers.json import DjangoJSONEncoder
-from unittest.case import SkipTest
-import re
-import json
-import datetime
-import urllib.parse
 
 
 class TestPortalAPISerializers(ModuleStoreTestCase):
