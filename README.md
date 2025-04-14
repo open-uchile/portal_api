@@ -1,4 +1,7 @@
 # Portal API
+
+![Coverage Status](/coverage-badge.svg)
+
 ![https://github.com/eol-uchile/portal_api/actions](https://github.com/eol-uchile/portal_api/workflows/Python%20application/badge.svg)
 
 # Install App
@@ -10,5 +13,10 @@
 ## TESTS
 **Prepare tests:**
 
-    > cd .github/
-    > docker-compose run lms /openedx/requirements/portal_api/.github/test_lms.sh
+- Install **act** following the instructions in [https://nektosact.com/installation/index.html](https://nektosact.com/installation/index.html)
+
+**Run tests:**
+- In a terminal at the root of the project
+    ```
+    act -W .github/workflows/pythonapp.yml
+    ```
