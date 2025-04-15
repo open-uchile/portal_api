@@ -17,9 +17,9 @@ def package_data(pkg, roots):
 
 setup(
     name="portal_api",
-    version="0.2",
-    author="Luis Santana",
-    author_email="luis.santana@uchile.cl",
+    version="1.0.0",
+    author="Oficina EOL UChile",
+    author_email="eol-ing@uchile.cl",
     description=".",
     packages=['portal_api'],
     install_requires=["unidecode>=1.1.1"],
